@@ -2,9 +2,13 @@
 
 # RUN
 1) Create an empty folder
+
 2) copy /etc/hadoop .
+
 3) copy /etc/krb5.conf .
+
 4) Create Dockerfile with this content
+
 FROM allxone/hadoop_client
 ADD krb5.conf /etc/krb5.conf
 ADD hadoop /etc/hadoop/
