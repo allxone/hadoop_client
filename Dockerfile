@@ -29,21 +29,17 @@ RUN wget --quiet http://archive-primary.cloudera.com/cdh5/redhat/6/x86_64/cdh/cl
 ENV HADOOP_CONF_DIR /etc/hadoop/conf
 
 # Maven
-RUN mkdir -p /usr/local/apache-maven && \
-    curl http://mirror.nohup.it/apache/maven/maven-3/$ds_maven/binaries/apache-maven-$ds_maven-bin.tar.gz | tar xz -C /usr/local && \
+RUN curl http://mirror.nohup.it/apache/maven/maven-3/$ds_maven/binaries/apache-maven-$ds_maven-bin.tar.gz | tar xz -C /usr/local && \
     echo "export M2_HOME=/usr/local/apache-maven-$ds_maven" >> /etc/profile.d/custom.sh && \
     echo "export M2=$M2_HOME/bin" >> /etc/profile.d/custom.sh && \
     echo "export MAVEN_OPTS=\"-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m\"" >> /etc/profile.d/custom.sh && \
     chmod +x /etc/profile.d/custom.sh
 
 # Spark
-RUN curl http://mirror.nohup.it/apache/spark/spark-$ds_spark/spark-$ds_spark.tgz | tar xz -C /usr/local && \
+RUN echo "export SPARK_HOME=/usr/local/spark-$ds_spark" >> /etc/profile.d/custom.sh && \
+    echo "export PATH=$SPARK_HOME/bin:$PATH" >> /etc/profile.d/custom.sh && \
+    chmod +x /etc/profile.d/custom.sh && \
+    curl http://mirror.nohup.it/apache/spark/spark-$ds_spark/spark-$ds_spark.tgz | tar xz -C /usr/local && \
     cd /usr/local/spark-$ds_spark && \
     export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m" && \
-    build/mvn -Pyarn -Phadoop-2.4 -Dhadoop.version=$ds_cdh -Phive -Phive-0.13.1 -Phive-thriftserver -DskipTests clean package
-    echo "export SPARK_HOME=/usr/local/spark-$ds_spark" >> /etc/profile.d/custom.sh && \
-    echo "export PATH=$SPARK_HOME/bin:$PATH" >> /etc/profile.d/custom.sh && \
-    chmod +x /etc/profile.d/custom.sh
-VOLUME /etc/hadoop
-
-ENTRYPOINT /bin/bash
+    build/mvn -q -Pyarn -Phadoop-2.4 -Dhadoop.version=$ds_cdh -Phive -Phive-0.13.1 -Phive-thriftserver -DskipTests clean package
