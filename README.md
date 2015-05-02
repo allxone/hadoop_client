@@ -10,7 +10,9 @@
 4) Create Dockerfile with this content
 
 FROM allxone/hadoop_client
+
 ADD krb5.conf /etc/krb5.conf
+
 ADD hadoop /etc/hadoop/
 
 5) Build your Docker image
