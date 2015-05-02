@@ -6,7 +6,7 @@ ENV ds_cdh 2.6.0-cdh5.4.0
 ENV ds_spark 1.3.0
 
 # Prerequisites
-RUN yum -y install wget tar bzip2 yum-plugin-priorities krb5-workstation && \
+RUN yum -q -y install wget tar bzip2 yum-plugin-priorities krb5-workstation && \
     yum clean all
 
 # Oracle JDK 7u75
@@ -28,18 +28,11 @@ RUN wget --quiet http://archive-primary.cloudera.com/cdh5/redhat/6/x86_64/cdh/cl
     yum clean all
 ENV HADOOP_CONF_DIR /etc/hadoop/conf
 
-# Maven
-RUN curl http://mirror.nohup.it/apache/maven/maven-3/$ds_maven/binaries/apache-maven-$ds_maven-bin.tar.gz | tar xz -C /usr/local && \
-    echo "export M2_HOME=/usr/local/apache-maven-$ds_maven" >> /etc/profile.d/custom.sh && \
-    echo "export M2=$M2_HOME/bin" >> /etc/profile.d/custom.sh && \
-    echo "export MAVEN_OPTS=\"-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m\"" >> /etc/profile.d/custom.sh && \
-    chmod +x /etc/profile.d/custom.sh
-
 # Spark
 RUN echo "export SPARK_HOME=/usr/local/spark-$ds_spark" >> /etc/profile.d/custom.sh && \
     echo "export PATH=$SPARK_HOME/bin:$PATH" >> /etc/profile.d/custom.sh && \
     chmod +x /etc/profile.d/custom.sh && \
-    curl http://mirror.nohup.it/apache/spark/spark-$ds_spark/spark-$ds_spark.tgz | tar xz -C /usr/local && \
+    curl -silent http://mirror.nohup.it/apache/spark/spark-$ds_spark/spark-$ds_spark.tgz | tar xz -C /usr/local && \
     cd /usr/local/spark-$ds_spark && \
     export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m" && \
     build/mvn -q -Pyarn -Phadoop-2.4 -Dhadoop.version=$ds_cdh -Phive -Phive-0.13.1 -Phive-thriftserver -DskipTests clean package
