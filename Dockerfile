@@ -35,4 +35,4 @@ RUN echo "export SPARK_HOME=/usr/local/spark-$ds_spark" >> /etc/profile.d/custom
     curl http://mirror.nohup.it/apache/spark/spark-$ds_spark/spark-$ds_spark.tgz | tar xz -C /usr/local && \
     cd /usr/local/spark-$ds_spark && \
     export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m" && \
-    build/mvn -q -Pyarn -Phadoop-2.4 -Dhadoop.version=$ds_cdh -Phive -Phive-0.13.1 -Phive-thriftserver -DskipTests clean package
+    build/mvn -Pyarn -Phadoop-2.4 -Dhadoop.version=$ds_cdh -Phive -Phive-0.14.0 -Phive-thriftserver -DskipTests clean package
