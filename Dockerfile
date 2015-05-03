@@ -33,3 +33,4 @@ RUN curl http://mirror.nohup.it/apache/spark/spark-$ds_spark/spark-$ds_spark.tgz
     build/mvn -Pyarn -Phadoop-2.4 -Dhadoop.version=$ds_cdh -Phive -Phive-thriftserver -DskipTests clean package
 ENV SPARK_HOME /usr/local/spark-$ds_spark
 ENV PATH $SPARK_HOME/bin:$PATH
+
