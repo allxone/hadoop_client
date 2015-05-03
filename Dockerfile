@@ -30,6 +30,7 @@ ENV HADOOP_CONF_DIR /etc/hadoop/conf
 RUN curl http://mirror.nohup.it/apache/spark/spark-$ds_spark/spark-$ds_spark.tgz | tar xz -C /usr/local && \
     cd /usr/local/spark-$ds_spark && \
     export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m" && \
+    export JAVA_HOME=$JAVA_HOME && \
     build/mvn -Pyarn -Phadoop-2.4 -Dhadoop.version=$ds_cdh -Phive -Phive-thriftserver -DskipTests clean package
 ENV SPARK_HOME /usr/local/spark-$ds_spark
 ENV PATH $SPARK_HOME/bin:$PATH
