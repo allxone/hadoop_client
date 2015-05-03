@@ -26,11 +26,11 @@ RUN wget --quiet http://archive-primary.cloudera.com/cdh5/redhat/6/x86_64/cdh/cl
 ENV HADOOP_CONF_DIR /etc/hadoop/conf
 
 # Spark
+ENV SPARK_HOME /usr/local/spark-$ds_spark
 RUN curl http://mirror.nohup.it/apache/spark/spark-$ds_spark/spark-$ds_spark.tgz | tar xz -C /usr/local && \
     cd /usr/local/spark-$ds_spark && \
     export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m" && \
-    build/mvn -q -Pyarn -Phadoop-2.4 -Dhadoop.version=$ds_cdh -Phive -Phive-thriftserver -DskipTests clean package
-ENV SPARK_HOME /usr/local/spark-$ds_spark
+    build/mvn -Pyarn -Phadoop-2.4 -Dhadoop.version=$ds_cdh -Phive -Phive-thriftserver -DskipTests clean package
 
 ENV PATH $JAVA_HOME/bin:$SPARK_HOME/bin:$PATH
 
