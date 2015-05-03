@@ -16,6 +16,7 @@ RUN wget --quiet --no-cookies --no-check-certificate --header "Cookie: gpw_e24=h
     /usr/sbin/alternatives --install "/usr/bin/java" "java" "/usr/java/default/bin/java" 3 && \
     /usr/sbin/alternatives --install "/usr/bin/javac" "javac" "/usr/java/default/bin/javac" 3
 ENV JAVA_HOME /usr/java/default
+ENV PATH $JAVA_HOME/bin:$PATH
 
 # CDH Hadoop Client
 RUN wget --quiet http://archive-primary.cloudera.com/cdh5/redhat/6/x86_64/cdh/cloudera-cdh5.repo && \
@@ -26,11 +27,9 @@ RUN wget --quiet http://archive-primary.cloudera.com/cdh5/redhat/6/x86_64/cdh/cl
 ENV HADOOP_CONF_DIR /etc/hadoop/conf
 
 # Spark
-ENV SPARK_HOME /usr/local/spark-$ds_spark
 RUN curl http://mirror.nohup.it/apache/spark/spark-$ds_spark/spark-$ds_spark.tgz | tar xz -C /usr/local && \
     cd /usr/local/spark-$ds_spark && \
     export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m" && \
     build/mvn -Pyarn -Phadoop-2.4 -Dhadoop.version=$ds_cdh -Phive -Phive-thriftserver -DskipTests clean package
-
-ENV PATH $JAVA_HOME/bin:$SPARK_HOME/bin:$PATH
-
+ENV SPARK_HOME /usr/local/spark-$ds_spark
+ENV PATH $SPARK_HOME/bin:$PATH
